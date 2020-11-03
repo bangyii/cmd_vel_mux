@@ -40,6 +40,7 @@ int main(int argc, char** argv)
 
     ROS_INFO("Command velocity mux node started");
 
+    ros::Rate r(20);
     while(ros::ok())
     {
         ros::spinOnce();
@@ -51,5 +52,7 @@ int main(int argc, char** argv)
         //Otherwise output shared_dwa's velocity
         else
             cmd_vel_pub.publish(shared_dwa_vel);
+
+        r.sleep();
     }
 }
