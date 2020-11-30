@@ -26,6 +26,6 @@ Command velocity multiplexer designed to switch velocity that is sent to the rob
 
 `~/cmd_vel_topic:` Twist topic to publish the resultant velocity to
 
-`~/rate:` Rate at which to run the multiplexer (Hz)
+`~/rate:` Rate at which to run the multiplexer, default is 20 (Hz)
 
-`~/blend_time:` Blending time window to fully switch from autonomous output velocity to shared control velocity (s)
+`~/blend_time:` Blending time window to fully switch from autonomous output velocity to shared control velocity, default is 1.0 (s)
