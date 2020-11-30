@@ -1,5 +1,7 @@
 # cmd_vel_mux
 
+## Description
+
 Command velocity multiplexer designed to switch velocity that is sent to the robot (from autonomous local planner to shared control planner or vice versa), depending on whether the user has an input velocity on the joystick.
 
 ## Subscribers
