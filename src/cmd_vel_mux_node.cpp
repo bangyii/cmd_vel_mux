@@ -1,5 +1,6 @@
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
+#include <std_msgs/Bool.h>
 
 std::string user_vel_topic = "/joy_vel";
 std::string shared_dwa_topic = "/shared_dwa/cmd_vel";
@@ -7,6 +8,9 @@ std::string local_planner_topic = "/local_planner/cmd_vel";
 std::string cmd_vel_topic = "/cmd_vel";
 double rate = 20;
 double blend_time = 1.0;
+bool autonomous_enabled = true;
+
+ros::Publisher autonomous_enabled_pub;
 
 geometry_msgs::Twist user_vel, shared_dwa_vel, local_planner_vel;
 
@@ -25,6 +29,15 @@ void localPlannerVelCB(const geometry_msgs::Twist::ConstPtr &msg)
     local_planner_vel = *msg;
 }
 
+void enableAutonomousCB(const std_msgs::Bool::ConstPtr &msg)
+{
+    if(msg->data != autonomous_enabled)
+    {
+        autonomous_enabled = msg->data;
+        autonomous_enabled_pub.publish(*msg);
+    }
+}
+
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "cmd_vel_mux");
@@ -36,11 +49,14 @@ int main(int argc, char** argv)
     nh.getParam("local_planner_topic", local_planner_topic);
     nh.getParam("rate", rate);
     nh.getParam("blend_time", blend_time);
+    nh.getParam("autonomous_enabled", autonomous_enabled);
 
     ros::Subscriber user_vel_sub = nh.subscribe(user_vel_topic, 1, &userVelCB);
     ros::Subscriber shared_vel_sub = nh.subscribe(shared_dwa_topic, 1, &sharedVelCB);
     ros::Subscriber local_planner_vel_sub = nh.subscribe(local_planner_topic, 1, &localPlannerVelCB);
     ros::Publisher cmd_vel_pub = nh.advertise<geometry_msgs::Twist>(cmd_vel_topic, 1);
+    ros::Subscriber enable_autonomous_sub = nh.subscribe("enable_autonomous", 1, &enableAutonomousCB);
+    autonomous_enabled_pub = nh.advertise<std_msgs::Bool>("autonomous_enabled", 1, true);
 
     ROS_INFO("Command velocity mux node started");
 
@@ -59,7 +75,7 @@ int main(int argc, char** argv)
         //Rounding to set a band before checking for 0
         double v_cmd = round(user_vel.linear.x * 10) / 10.0;
         double w_cmd = round( user_vel.angular.z * 10) / 10.0;
-        if(v_cmd == 0 && w_cmd == 0)
+        if(v_cmd == 0 && w_cmd == 0 && autonomous_enabled)
         {
             channel = 0;
 
@@ -92,14 +108,6 @@ int main(int argc, char** argv)
             else
                 cmd_vel_pub.publish(shared_dwa_vel);
         }
-
-        // //If user velocity is 0, switch mux to output local_planner's velocity
-        // if(user_vel.linear.x == 0 && user_vel.angular.z == 0)
-        //     cmd_vel_pub.publish(local_planner_vel);
-
-        // //Otherwise output shared_dwa's velocity
-        // else
-        //     cmd_vel_pub.publish(shared_dwa_vel);
 
         r.sleep();
     }

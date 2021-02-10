@@ -12,9 +12,13 @@ Command velocity multiplexer designed to switch velocity that is sent to the rob
 
 `/local_planner/cmd_vel [geometry_msgs::Twist]:` Local planner's output twist
 
+`~/enable_autonomous [std_msgs::Bool]:` Messages received on this topic will set the autonomous mode to be enabled or disabled. Default behavior determined by param 'autonomous_enabled'
+
 ## Publishers
 
 `/cmd_vel [geometry_msgs::Twist]:` Resultant blended/muxed command velocity that is sent to robot
+
+`~/autonomous_enabled [std_msgs::Bool]:` Publishes whether autonomous is enabled or not
 
 ## Parameters
 
@@ -29,3 +33,5 @@ Command velocity multiplexer designed to switch velocity that is sent to the rob
 `~/rate:` Rate at which to run the multiplexer, default is 20 (Hz)
 
 `~/blend_time:` Blending time window to fully switch from autonomous output velocity to shared control velocity, default is 1.0 (s)
+
+`~/autonomous_enabled:` Whether or not to enable autonomous behavior on startup
