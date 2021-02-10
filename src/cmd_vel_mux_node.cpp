@@ -73,7 +73,6 @@ int main(int argc, char** argv)
         else
         {
             channel = 1;
-
             //There was a change from autonomous to shared_dwa
             if(prev_channel != channel)
             {
