@@ -1,0 +1,5 @@
+<launch>
+	<node name="cmd_vel_mux_node" type="cmd_vel_mux_node" pkg="cmd_vel_mux">
+		<rosparam command="load" file="$(find cmd_vel_mux)/config/params.yaml"/>
+	</node>
+</launch>

@@ -1,4 +1,6 @@
 user_vel_topic: "/joy_vel"
 shared_dwa_topic: "/shared_dwa/cmd_vel"
 local_planner_topic: "/local_planner/cmd_vel"
+rate: 20
+blend_time: 1.0
 cmd_vel_topic: "/cmd_vel"
